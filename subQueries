@@ -1,0 +1,48 @@
+/*Find the names of customers who have made the highest payment. 
+Include the customer name and the amount of the highest payment.
+*/
+SELECT customerName, amount
+FROM customers 
+INNER JOIN payments 
+USING (customerNumber)
+where amount = (SELECT MAX(amount) FROM payments);
+
+/*
+List the product names and prices of products that are priced above the average product price.
+*/
+
+SELECT productName, buyPrice
+FROM products
+WHERE buyPrice > (SELECT AVG(buyPrice) FROM products);
+
+/*
+List the names of customers who have made payments that are above the average payment amount.
+ Include the customer name, the check number, and the payment amount.
+*/
+
+SELECT c.customerName, p.checkNumber, p.amount
+FROM
+customers c
+INNER JOIN payments p
+USING (customerNumber)
+WHERE p.amount  > (SELECT AVG(p.amount) FROM payments);
+
+/*
+Find the order numbers and total amounts of orders where the total amount is above the average order total.
+*/
+
+SELECT orderNumber,SUM(quantityordered * priceeach) as total_amount
+FROM orderdetails
+GROUP BY orderNumber
+HAVING SUM(quantityordered * priceeach) >
+(
+SELECT AVG(total_amount) 
+FROM 
+(SELECT SUM(quantityordered * priceeach) AS total_amount
+FROM orderdetails
+GROUP BY orderNumber)
+AS average
+);
+
+
+
